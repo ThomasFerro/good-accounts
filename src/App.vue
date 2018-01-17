@@ -21,6 +21,16 @@
     <v-content>
       <v-container fluid fill-height>
         <router-view></router-view>
+        <v-btn
+          fixed
+          bottom
+          right
+          dark
+          fab
+          color="red"
+        >
+          <v-icon>add</v-icon>
+        </v-btn>
       </v-container>
     </v-content>
   </v-app>
@@ -38,4 +48,7 @@ export default {
 </script>
 
 <style>
+html {
+  overflow: hidden;
+}
 </style>
