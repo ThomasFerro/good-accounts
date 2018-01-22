@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Vuetify from 'vuetify';
 import App from './App';
-// import routes from './routes';
+import routes from './routes';
 import '../node_modules/vuetify/dist/vuetify.min.css';
 
 Vue.use(VueRouter);
@@ -10,7 +10,7 @@ Vue.use(Vuetify);
 
 const router = new VueRouter({
   mode: 'history',
-  // routes,
+  routes,
 });
 
 /* eslint-disable no-new */
