@@ -17,7 +17,7 @@
       </v-list>
     </v-toolbar>
     </v-navigation-drawer>
-    <v-toolbar app>
+    <v-toolbar fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
     <v-content>
@@ -52,10 +52,6 @@ export default {
 </script>
 
 <style>
-html {
-  overflow: hidden;
-}
-
 .home-link {
   text-decoration: none;
 }
