@@ -6,7 +6,12 @@
       </v-card-title>
       <v-card-text>
         <v-form v-model="isValid">
-          <!-- TODO User involved -->
+          <!-- User involved -->
+          <user-picker
+            v-model="selectedUser"
+            label="User"
+            required
+          ></user-picker>
           <!-- Entry informations -->
           <v-text-field
             v-for="input in form"
@@ -25,11 +30,11 @@
             v-model="useDefaultDateTime"
           ></v-checkbox>
           <v-menu
+            v-if="!useDefaultDateTime"
             class="mr-2"
             lazy
             :close-on-content-click="false"
             v-model="dateMenu"
-            :disabled="useDefaultDateTime"
             transition="scale-transition"
             offset-y
           >
@@ -50,6 +55,7 @@
           </v-menu>
           <!-- Time -->
           <v-menu
+            v-if="!useDefaultDateTime"
             lazy
             :close-on-content-click="false"
             v-model="timeMenu"
@@ -89,11 +95,14 @@
 <script>
 import Moment from 'moment';
 
+import UserPicker from '@/user/UserPicker';
+
 export default {
   name: 'entry-form',
   data() {
     return {
       isValid: false,
+      selectedUser: '',
       form: [
         {
           id: 'amount',
@@ -165,6 +174,9 @@ export default {
       console.log('post', this.entryInformations);
       // TODO : API POST
     },
+  },
+  components: {
+    UserPicker,
   },
 };
 </script>
