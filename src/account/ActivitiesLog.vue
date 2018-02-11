@@ -16,20 +16,29 @@
       :key="activity.id"
     >
       <slot :activity="activity">
-        <!-- TODO Replace with user card -->
-        <span>{{activity && activity.user && activity.user.displayName}}</span>
-        <!-- Spent / Credited -->
-        <span v-if="activity && activity.amount < 0">spent</span>
-        <span v-else>credited</span>
-        <!-- Amount -->
-        <span
-          :class="amountClass(activity && activity.amount)"
-        >{{activityAmount(activity && activity.amount, currency)}}</span>
-        <!-- Date -->
-        <span
-          :title="completeDate(activity && activity.date)"
-        >{{relativeDate(activity && activity.date)}}</span>
-        <br/>
+        <!-- User card -->
+        <v-layout align-center row>
+          <v-avatar
+            :class="(activity && activity.user && activity.user.color) || 'red'"
+            size="2em"
+          >
+            <span
+              class="white--text"
+            >{{activity && activity.user && activity.user.initials}}</span>
+          </v-avatar>
+          <span>&nbsp;{{activity && activity.user && activity.user.displayName}}&nbsp;</span>
+          <!-- Spent / Credited -->
+          <span v-if="activity && activity.amount < 0">spent&nbsp;</span>
+          <span v-else>credited </span>
+          <!-- Amount -->
+          <span
+            :class="amountClass(activity && activity.amount)"
+          >{{activityAmount(activity && activity.amount, currency)}}&nbsp;</span>
+          <!-- Date -->
+          <span
+            :title="completeDate(activity && activity.date)"
+          >{{relativeDate(activity && activity.date)}}</span>
+        </v-layout>
         <!-- Subject -->
         <blockquote class="blockquote">{{activity && activity.subject}}</blockquote>
       </slot>

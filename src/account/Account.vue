@@ -97,6 +97,8 @@ export default {
             subject: 'Billets de train aller-retour Paris',
             user: {
               displayName: 'Thomas',
+              initials: 'TF',
+              color: 'green',
             },
             date: '2018-01-10T18:35:24+00:00',
           }, {
@@ -104,6 +106,8 @@ export default {
             subject: 'Salaire Janvier 2018',
             user: {
               displayName: 'Neoledge',
+              initials: 'NL',
+              color: 'blue',
             },
             date: '2018-01-02T01:35:24+00:00',
           }, {
@@ -111,6 +115,8 @@ export default {
             subject: 'Repas Trois Brasseurs',
             user: {
               displayName: 'Thomas',
+              initials: 'TF',
+              color: 'green',
             },
             date: '2017-12-25T23:35:24+00:00',
           },
