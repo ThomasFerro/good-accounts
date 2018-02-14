@@ -17,7 +17,11 @@
     >
       <slot :activity="activity">
         <!-- User card -->
-        <v-layout align-center row>
+        <v-layout
+          class="user-card"
+          align-center
+          row
+        >
           <v-avatar
             :class="(activity && activity.user && activity.user.color) || 'red'"
             size="2em"
@@ -64,3 +68,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.user-card {
+  white-space: pre;
+}
+</style>

@@ -41,12 +41,30 @@
 </template>
 
 <script>
+import ApiMixin from '@/mixins/api';
+
 export default {
   name: 'App',
+  mixins: [ApiMixin],
   data() {
     return {
       drawer: null,
+      accounts: [],
     };
+  },
+  methods: {
+    loadAccounts() {
+      this.get('accounts')
+        .then((data) => {
+          this.accounts = data;
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
+    },
+  },
+  created() {
+    this.loadAccounts();
   },
 };
 </script>

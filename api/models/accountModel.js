@@ -7,6 +7,7 @@ const TransactionSchema = new Schema({
 });
 
 const AccountSchema = new Schema({
+  name: String,
   Created_date: {
     type: Date,
     default: Date.now,
