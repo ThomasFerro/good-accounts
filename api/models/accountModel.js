@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
+const TransactionSchema = require('./transactionModel');
 
 const Schema = mongoose.Schema;
 
-const TransactionSchema = new Schema({
-  amount: Number,
-});
-
-const AccountSchema = new Schema({
+module.exports = new Schema({
   name: String,
   Created_date: {
     type: Date,
@@ -14,5 +11,3 @@ const AccountSchema = new Schema({
   },
   transactions: [TransactionSchema],
 });
-
-module.exports = mongoose.model('account', AccountSchema);
