@@ -6,16 +6,36 @@
       v-model="drawer"
     >
       <v-toolbar flat>
-      <v-list>
-        <router-link class="home-link" :to="{ name: 'home' }">
+        <v-list>
           <v-list-tile>
-            <v-list-tile-title class="title">
-              Good Accounts
-            </v-list-tile-title>
+            <router-link class="account-link" :to="{ name: 'home' }">
+              <v-list-tile-title class="title">
+                Good Accounts
+              </v-list-tile-title>
+            </router-link>
           </v-list-tile>
-        </router-link>
+        </v-list>
+      </v-toolbar>
+      <v-divider></v-divider>
+      <v-list
+        dense
+        class="pt-0"
+      >
+        <v-list-tile
+          v-for="account in accounts"
+          :key="account._id"
+          @click="selectAccount(account)"
+        >
+          <v-list-tile-action>
+            <v-icon>{{ account.icon || defaultAccountIcon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              {{ account.name || defaultAccountName }}
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
-    </v-toolbar>
     </v-navigation-drawer>
     <v-toolbar fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -50,7 +70,28 @@ export default {
     return {
       drawer: null,
       accounts: [],
+      // TODO Change default icon
+      defaultAccountIcon: 'dashboard',
+      defaultAccountName: 'Unnamed account',
     };
+  },
+  computed: {
+    selectedAccount: {
+      get() {
+        return this.$store.state
+        && this.$store.state.account
+        && this.$store.state.account.selectedAccount;
+      },
+      set(account) {
+        // Commit the selected account change
+        this.$store.commit('changeSelectedAccount', account);
+      },
+    },
+    selectedAccountId() {
+      return (this.selectedAccount
+        && this.selectedAccount._id)
+      || -1;
+    },
   },
   methods: {
     loadAccounts() {
@@ -62,6 +103,9 @@ export default {
           console.log('error', error);
         });
     },
+    selectAccount(account) {
+      this.selectedAccount = account;
+    },
   },
   created() {
     this.loadAccounts();
@@ -70,7 +114,7 @@ export default {
 </script>
 
 <style>
-.home-link {
+.account-link {
   text-decoration: none;
 }
 </style>

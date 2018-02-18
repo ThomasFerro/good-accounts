@@ -24,4 +24,4 @@ routes(app); //register the route
 
 app.listen(port);
 
-console.log('good-accounts RESTful API server started on: ' + port);
+console.log('good-accounts REST API server started on: ' + port);
