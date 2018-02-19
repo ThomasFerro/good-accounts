@@ -31,10 +31,12 @@
           ></v-checkbox>
           <v-menu
             v-if="!useDefaultDateTime"
+            ref="dateMenu"
             class="mr-2"
             lazy
             :close-on-content-click="false"
             v-model="dateMenu"
+            :return-value.sync="dateMenu"
             transition="scale-transition"
             offset-y
           >
@@ -45,20 +47,20 @@
               prepend-icon="event"
               readonly
             ></v-text-field>
-            <v-date-picker v-model="entryDate" no-title scrollable actions>
-              <v-card-actions slot-scope="{ save, cancel }">
-                <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
-                <v-btn flat color="primary" @click="save">OK</v-btn>
-              </v-card-actions>
+            <v-date-picker v-model="entryDate" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn flat color="primary" @click="dateMenu = false">Cancel</v-btn>
+              <v-btn flat color="primary" @click="$refs.dateMenu.save(entryDate)">OK</v-btn>
             </v-date-picker>
           </v-menu>
           <!-- Time -->
           <v-menu
             v-if="!useDefaultDateTime"
+            ref="timeMenu"
             lazy
             :close-on-content-click="false"
             v-model="timeMenu"
+            :return-value.sync="entryTime"
             :disabled="useDefaultDateTime"
             transition="scale-transition"
             offset-y
@@ -70,13 +72,10 @@
               prepend-icon="access_time"
               readonly
             ></v-text-field>
-            <v-time-picker v-model="entryTime" autosave>
-              <v-card-actions slot-scope="{ save, cancel }">
-                <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
-                <v-btn flat color="primary" @click="save">OK</v-btn>
-              </v-card-actions>
-            </v-time-picker>
+            <v-time-picker
+              v-model="entryTime"
+              @change="$refs.timeMenu.save(entryTime)"
+            ></v-time-picker>
           </v-menu>
         </v-form>
       </v-card-text>

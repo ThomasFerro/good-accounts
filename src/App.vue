@@ -81,10 +81,12 @@ export default {
       this.get('accounts')
         .then((data) => {
           this.accounts = data;
-          this.accounts &&
-          this.accounts.length > 0 ?
-            this.selectAccount(this.accounts[0]) :
+          if (this.accounts &&
+          this.accounts.length > 0) {
+            this.selectAccount(this.accounts[0]);
+          } else {
             this.selectAccount({});
+          }
         })
         .catch((error) => {
           console.log('error', error);

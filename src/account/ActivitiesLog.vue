@@ -24,7 +24,7 @@
         >
           <v-avatar
             :class="(activity && activity.user && activity.user.color) || 'red'"
-            size="2em"
+            size="32px"
           >
             <span
               class="white--text"
