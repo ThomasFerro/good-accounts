@@ -94,6 +94,8 @@ export default {
     },
     selectAccount(account) {
       this.selectedAccount = account;
+      this.$router.push({ name: 'account' });
+      this.drawer = false;
     },
   },
   created() {

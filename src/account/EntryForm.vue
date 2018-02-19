@@ -104,14 +104,13 @@ export default {
   data() {
     return {
       isValid: false,
-      selectedUser: 'test',
+      selectedUser: '',
       form: [
         {
           id: 'amount',
           type: 'number',
           label: 'Amount',
-          // TODO : Default value
-          value: '12',
+          value: '',
           rules: [
             v => !!v || 'Required',
           ],
@@ -120,8 +119,7 @@ export default {
         }, {
           id: 'name',
           label: 'Name',
-          // TODO : Default value
-          value: 'test',
+          value: '',
           rules: [
             v => !!v || 'Required',
           ],
@@ -175,15 +173,25 @@ export default {
       this.entryTime = Moment().format(this.timeFormat);
     },
     validate() {
-      // TODO : Post new transaction
-      // this.post(`accounts/${this.selectedAccountId}/transactions`, this.entryInformations)
-      //   .then((data) => {
-      //     console.log('post success', data);
-      //   })
-      //   .catch((error) => {
-      //     console.log('post error', error);
-      //   });
+      // Post new transaction
+      this.post(`accounts/${this.selectedAccountId}/transactions`, this.entryInformations)
+        .then(() => {
+          this.resetForm();
+        })
+        .catch((error) => {
+          console.log('post error', error);
+        });
     },
+    resetForm() {
+      this.form.forEach((input) => {
+        input.value = '';
+      });
+      this.selectedUser = '';
+      this.useDefaultDateTime = true;
+    },
+  },
+  mounted() {
+    this.resetForm();
   },
   components: {
     UserPicker,

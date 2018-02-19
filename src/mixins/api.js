@@ -3,7 +3,7 @@ import axios from 'axios';
 /**
  * Api requests' mixin, implementing axios
  *
- * TODO : Implements POST / PUT / DELETE
+ * TODO : Implements PUT / DELETE
  * TODO : Success / error management
  * TODO : Manage cancellation
  */
@@ -36,6 +36,13 @@ export default {
         method: 'get',
         resource,
         params,
+      });
+    },
+    post(resource, data) {
+      return this.request({
+        method: 'post',
+        resource,
+        data,
       });
     },
   },

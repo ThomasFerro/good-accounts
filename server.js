@@ -15,12 +15,14 @@ app.use(bodyParser.json());
 // Allow access to the website
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
-
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
-var routes = require('./api/routes/accountRoutes');
-routes(app); //register the route
+var accountRoutes = require('./api/routes/accountRoutes');
+var transactionRoutes = require('./api/routes/transactionRoutes');
+accountRoutes(app); //register the route
+transactionRoutes(app); //register the route
 
 app.listen(port);
 
