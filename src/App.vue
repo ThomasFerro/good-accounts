@@ -62,10 +62,11 @@
 
 <script>
 import ApiMixin from '@/mixins/api';
+import AccountMixin from '@/account/mixin';
 
 export default {
   name: 'App',
-  mixins: [ApiMixin],
+  mixins: [ApiMixin, AccountMixin],
   data() {
     return {
       drawer: null,
@@ -75,29 +76,15 @@ export default {
       defaultAccountName: 'Unnamed account',
     };
   },
-  computed: {
-    selectedAccount: {
-      get() {
-        return this.$store.state
-        && this.$store.state.account
-        && this.$store.state.account.selectedAccount;
-      },
-      set(account) {
-        // Commit the selected account change
-        this.$store.commit('changeSelectedAccount', account);
-      },
-    },
-    selectedAccountId() {
-      return (this.selectedAccount
-        && this.selectedAccount._id)
-      || -1;
-    },
-  },
   methods: {
     loadAccounts() {
       this.get('accounts')
         .then((data) => {
           this.accounts = data;
+          this.accounts &&
+          this.accounts.length > 0 ?
+            this.selectAccount(this.accounts[0]) :
+            this.selectAccount({});
         })
         .catch((error) => {
           console.log('error', error);

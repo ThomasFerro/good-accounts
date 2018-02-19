@@ -2,7 +2,7 @@
   <v-flex xs12 fill-height>
     <v-card>
       <v-card-title>
-        <div class="headline">New entry</div>
+        <div class="headline">New entry ({{ selectedAccountName }})</div>
       </v-card-title>
       <v-card-text>
         <v-form v-model="isValid">
@@ -96,19 +96,23 @@
 import Moment from 'moment';
 
 import UserPicker from '@/user/UserPicker';
+import ApiMixin from '@/mixins/api';
+import AccountMixin from '@/account/mixin';
 
 export default {
   name: 'entry-form',
+  mixins: [ApiMixin, AccountMixin],
   data() {
     return {
       isValid: false,
-      selectedUser: '',
+      selectedUser: 'test',
       form: [
         {
           id: 'amount',
           type: 'number',
           label: 'Amount',
-          value: '',
+          // TODO : Default value
+          value: '12',
           rules: [
             v => !!v || 'Required',
           ],
@@ -117,7 +121,8 @@ export default {
         }, {
           id: 'name',
           label: 'Name',
-          value: '',
+          // TODO : Default value
+          value: 'test',
           rules: [
             v => !!v || 'Required',
           ],
@@ -171,8 +176,14 @@ export default {
       this.entryTime = Moment().format(this.timeFormat);
     },
     validate() {
-      console.log('post', this.entryInformations);
-      // TODO : API POST
+      // TODO : Post new transaction
+      // this.post(`accounts/${this.selectedAccountId}/transactions`, this.entryInformations)
+      //   .then((data) => {
+      //     console.log('post success', data);
+      //   })
+      //   .catch((error) => {
+      //     console.log('post error', error);
+      //   });
     },
   },
   components: {
