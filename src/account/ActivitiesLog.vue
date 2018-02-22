@@ -13,7 +13,7 @@
     <div
       v-if="showActivities"
       v-for="activity in activities"
-      :key="activity.id"
+      :key="activity._id"
     >
       <slot :activity="activity">
         <!-- User card -->
@@ -28,9 +28,9 @@
           >
             <span
               class="white--text"
-            >{{activity && activity.user && activity.user.initials}}</span>
+            >{{userInitials(activity)}}</span>
           </v-avatar>
-          <span>&nbsp;{{activity && activity.user && activity.user.displayName}}&nbsp;</span>
+          <span>&nbsp;{{userDisplayName(activity)}}&nbsp;</span>
           <!-- Spent / Credited -->
           <span v-if="activity && activity.amount < 0">spent&nbsp;</span>
           <span v-else>credited </span>
@@ -44,7 +44,11 @@
           >{{relativeDate(activity && activity.date)}}</span>
         </v-layout>
         <!-- Subject -->
-        <blockquote class="blockquote">{{activity && activity.subject}}</blockquote>
+        <blockquote class="blockquote">
+          {{activity && activity.name}}
+          <br/>
+          {{activity && activity.description}}
+        </blockquote>
       </slot>
     </div>
   </v-flex>
@@ -65,6 +69,32 @@ export default {
   props: {
     activities: Array,
     currency: String,
+  },
+  methods: {
+    userInitials(activity) {
+      if (activity
+      && activity.user) {
+        if (activity.user.initials) {
+          return activity.user.initials;
+        }
+        const firstName = (activity.user.firstName && activity.user.firstName[0])
+        || '';
+        const lastName = (activity.user.lastName && activity.user.lastName[0])
+        || '';
+        return `${firstName}${lastName}`;
+      }
+      return '';
+    },
+    userDisplayName(activity) {
+      if (activity
+      && activity.user) {
+        if (activity.user.displayName) {
+          return activity.user.displayName;
+        }
+        return `${activity.user.firstName} ${activity.user.lastName}`;
+      }
+      return '';
+    },
   },
 };
 </script>

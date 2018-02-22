@@ -2,7 +2,7 @@
   <v-flex xs12 fill-height>
     <v-card>
       <v-card-title primary-title>
-        <div class="headline">{{accountData && accountData.title}}</div>
+        <div class="headline">{{accountData && accountData.name}}</div>
         <!-- TODO : Users' icons -->
       </v-card-title>
       <v-card-text>
@@ -38,13 +38,11 @@
 <script>
 import ActivitiesLog from '@/account/ActivitiesLog';
 import AccountMixin from '@/account/mixin';
+import ApiMixin from '@/mixins/api';
 
 export default {
   name: 'account',
-  mixins: [AccountMixin],
-  props: {
-    accountId: String,
-  },
+  mixins: [ApiMixin, AccountMixin],
   data() {
     return {
       accountData: {},
@@ -76,7 +74,7 @@ export default {
     },
   },
   watch: {
-    accountId: {
+    selectedAccountId: {
       handler() {
         this.loadAccountData();
       },
@@ -86,42 +84,24 @@ export default {
   methods: {
     // Load current account's data
     loadAccountData() {
-      // TODO : Load data from API
-      this.accountData = {
-        title: 'Compte personnel',
-        amount: 125.5,
-        currency: '€',
-        transactions: [
-          {
-            amount: -120,
-            subject: 'Billets de train aller-retour Paris',
-            user: {
-              displayName: 'Thomas',
-              initials: 'TF',
-              color: 'green',
-            },
-            date: '2018-01-10T18:35:24+00:00',
-          }, {
-            amount: 7500,
-            subject: 'Salaire Janvier 2018',
-            user: {
-              displayName: 'Neoledge',
-              initials: 'NL',
-              color: 'blue',
-            },
-            date: '2018-01-02T01:35:24+00:00',
-          }, {
-            amount: -12.10,
-            subject: 'Repas Trois Brasseurs',
-            user: {
-              displayName: 'Thomas',
-              initials: 'TF',
-              color: 'green',
-            },
-            date: '2017-12-25T23:35:24+00:00',
-          },
-        ],
-      };
+      if (this.selectedAccountId) {
+        console.log('loadAccountData', this.selectedAccountId);
+        this.get(`accounts/${this.selectedAccountId}`)
+          .then((account) => {
+            this.accountData = {
+              name: account.name,
+              amount: account.amount,
+              // TODO : Manage currency
+              currency: '€',
+              transactions: account.transactions,
+            };
+          })
+          .catch((error) => {
+            console.log('Account get error', error);
+          });
+      } else {
+        this.accountData = {};
+      }
     },
   },
   components: {

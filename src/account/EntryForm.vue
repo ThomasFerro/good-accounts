@@ -5,7 +5,7 @@
         <div class="headline">New entry ({{ selectedAccountName }})</div>
       </v-card-title>
       <v-card-text>
-        <v-form v-model="isValid">
+        <v-form v-model="isValid" ref="form">
           <!-- User involved -->
           <user-picker
             v-model="selectedUser"
@@ -146,6 +146,7 @@ export default {
     },
     entryInformations() {
       const informations = {
+        user: this.selectedUser,
         date: this.completeDateTime,
       };
 
@@ -183,10 +184,10 @@ export default {
         });
     },
     resetForm() {
-      this.form.forEach((input) => {
-        input.value = '';
-      });
-      this.selectedUser = '';
+      if (this.$refs.form
+      && this.$refs.form.reset) {
+        this.$refs.form.reset();
+      }
       this.useDefaultDateTime = true;
     },
   },

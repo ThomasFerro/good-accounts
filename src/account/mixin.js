@@ -15,7 +15,7 @@ export default {
       return (this.selectedAccount
         // eslint-disable-next-line no-underscore-dangle
         && this.selectedAccount._id)
-      || -1;
+      || '';
     },
     selectedAccountName() {
       return (this.selectedAccount
@@ -32,7 +32,10 @@ export default {
     },
     activityAmount(amount, currency) {
       // TODO : Manage currencyBeforeAmount
-      return `${amount}${currency}`;
+      if (amount) {
+        return `${amount}${currency || ''}`;
+      }
+      return `0${currency || ''}`;
     },
   },
 };
