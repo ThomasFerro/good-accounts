@@ -1,14 +1,15 @@
+/* eslint-disable no-param-reassign */
 const moment = require('moment');
 const mongoose = require('mongoose');
 
 const Account = mongoose.model('account');
 
 exports.list_all_accounts = (req, res) => {
-  Account.find({}, (err, account) => {
+  Account.find({}, (err, accounts) => {
     if (err) {
       res.send(err);
     }
-    res.json(account);
+    res.json(accounts);
   });
 };
 
@@ -27,15 +28,14 @@ exports.read_an_account = (req, res) => {
     if (err) {
       res.send(err);
     }
-    const formattedAccount = Object.assign({}, account);
     if (account.transactions) {
-      formattedAccount.amount = 0;
+      account.amount = 0;
       account.transactions.forEach((transaction) => {
-        formattedAccount.amount += transaction.amount;
+        account.amount += transaction.amount;
       });
       // Filter transactions
       const dateLimit = moment().utc().subtract(6, 'months');
-      formattedAccount.transactions = account.transactions
+      account.transactions = account.transactions
         .filter(transaction =>
           transaction
           && transaction.date
@@ -48,7 +48,7 @@ exports.read_an_account = (req, res) => {
         });
     }
 
-    res.json(formattedAccount);
+    res.json(account);
   });
 };
 

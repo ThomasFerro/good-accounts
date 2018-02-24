@@ -17,12 +17,19 @@
         </v-list>
       </v-toolbar>
       <v-divider></v-divider>
+      <v-text-field
+        class="px-2"
+        v-model="accountQuery"
+        :append-icon="'add_circle'"
+        :append-icon-cb="createAccount"
+        @keyup.enter="createAccount"
+      ></v-text-field>
       <v-list
         dense
         class="pt-0"
       >
         <v-list-tile
-          v-for="account in accounts"
+          v-for="account in filteredAccountList"
           :key="account._id"
           @click="selectAccount(account)"
         >
@@ -30,7 +37,7 @@
             <v-icon>{{ account.icon || defaultAccountIcon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title :class="{ 'blue--text': selectedAccount === account }">
               {{ account.name || defaultAccountName }}
             </v-list-tile-title>
           </v-list-tile-content>
@@ -74,7 +81,19 @@ export default {
       // TODO Change default icon
       defaultAccountIcon: 'dashboard',
       defaultAccountName: 'Unnamed account',
+      accountQuery: '',
     };
+  },
+  computed: {
+    filteredAccountList() {
+      if (!this.accounts || !this.accounts.filter) {
+        return [];
+      }
+
+      return this.accounts
+        .filter(account =>
+          !this.accountQuery || account.name.indexOf(this.accountQuery) > -1);
+    },
   },
   methods: {
     loadAccounts() {
@@ -90,6 +109,19 @@ export default {
         })
         .catch((error) => {
           console.log('error', error);
+        });
+    },
+    createAccount() {
+      this.post('accounts', {
+        name: this.accountQuery,
+      })
+        .then((data) => {
+          this.accountQuery = '';
+          this.accounts.push(data);
+          this.selectAccount(data);
+        })
+        .catch((error) => {
+          console.log('post account error', error);
         });
     },
     selectAccount(account) {
