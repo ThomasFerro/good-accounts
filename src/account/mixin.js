@@ -33,9 +33,16 @@ export default {
     activityAmount(amount, currency) {
       // TODO : Manage currencyBeforeAmount
       if (amount) {
-        return `${amount}${currency || ''}`;
+        return `${this.fixedNumber(amount)}${currency || ''}`;
       }
       return `0${currency || ''}`;
+    },
+    fixedNumber(number) {
+      if (number) {
+        return Number.parseFloat(number).toFixed(2);
+      }
+
+      return 0;
     },
   },
 };

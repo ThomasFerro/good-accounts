@@ -50,7 +50,7 @@
             right
             dark
             fab
-            color="red"
+            color="blue"
           >
             <v-icon>add</v-icon>
           </v-btn>

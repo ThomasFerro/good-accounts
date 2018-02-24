@@ -1,3 +1,4 @@
+const moment = require('moment');
 const mongoose = require('mongoose');
 
 const Account = mongoose.model('account');
@@ -26,7 +27,28 @@ exports.read_an_account = (req, res) => {
     if (err) {
       res.send(err);
     }
-    res.json(account);
+    const formattedAccount = Object.assign({}, account);
+    if (account.transactions) {
+      formattedAccount.amount = 0;
+      account.transactions.forEach((transaction) => {
+        formattedAccount.amount += transaction.amount;
+      });
+      // Filter transactions
+      const dateLimit = moment().utc().subtract(6, 'months');
+      formattedAccount.transactions = account.transactions
+        .filter(transaction =>
+          transaction
+          && transaction.date
+          && moment(transaction.date).isAfter(dateLimit))
+        .sort((transactionA, transactionB) => {
+          if (moment(transactionA.date).isAfter(moment(transactionB.date))) {
+            return -1;
+          }
+          return 1;
+        });
+    }
+
+    res.json(formattedAccount);
   });
 };
 

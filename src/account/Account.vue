@@ -70,7 +70,7 @@ export default {
     // Last transactions' relative date
     lastTransactionsDate() {
       // TODO : Use Moment to find the relative date
-      return 'ten mounths';
+      return 'six mounths';
     },
   },
   watch: {
@@ -85,7 +85,6 @@ export default {
     // Load current account's data
     loadAccountData() {
       if (this.selectedAccountId) {
-        console.log('loadAccountData', this.selectedAccountId);
         this.get(`accounts/${this.selectedAccountId}`)
           .then((account) => {
             this.accountData = {

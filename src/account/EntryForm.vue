@@ -82,10 +82,14 @@
       <v-card-actions>
         <v-btn
           flat
-          color="red"
+          color="blue"
           @click="validate"
           :disabled="!isValid"
         >Validate</v-btn>
+        <v-btn
+          flat
+          @click="exit"
+        >Exit</v-btn>
       </v-card-actions>
     </v-card>
   </v-flex>
@@ -189,6 +193,9 @@ export default {
         this.$refs.form.reset();
       }
       this.useDefaultDateTime = true;
+    },
+    exit() {
+      this.$router.push({ name: 'account' });
     },
   },
   mounted() {
