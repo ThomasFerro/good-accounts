@@ -5,8 +5,11 @@ const UserSchema = require('./userModel');
 const Schema = mongoose.Schema;
 
 module.exports = new Schema({
-  name: String,
-  Created_date: {
+  name: {
+    type: String,
+    required: true,
+  },
+  created_date: {
     type: Date,
     default: Date.now,
   },

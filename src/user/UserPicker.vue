@@ -3,29 +3,34 @@
     :label="label"
     autocomplete
     :loading="loading"
-    :cache-items="cacheItems"
     :required="required"
     :items="formattedItems"
     :rules="rules"
     :search-input.sync="search"
     v-model="formattedValue"
+    item-text="displayName"
+    no-data-text="No user found"
   ></v-select>
 </template>
 
 <script>
+import _ from 'lodash';
+
+import ApiMixin from '@/mixins/api';
+
 export default {
   name: 'user-picker',
+  mixins: [ApiMixin],
   props: {
-    value: [Array, String],
+    value: [Array, String, Object],
     label: String,
     required: Boolean,
     rules: {
       type: Array,
       default() {
-        return [() => (this.value && this.value.length > 0) || 'You must choose at least one'];
+        return [() => (this.value && this.value.id !== null) || 'You must choose at least one'];
       },
     },
-    cacheItems: Boolean,
   },
   data() {
     return {
@@ -36,10 +41,16 @@ export default {
   },
   computed: {
     formattedItems() {
-      // List of items preceded by the current user
-      // TODO : Add current user
+      const items = [];
+      if (this.items
+      && this.value
+      && this.value.id
+      && !_.find(this.items, ['id', this.value.id])) {
+        items.push(this.value);
+      }
+
       return [
-        'Current User',
+        ...items,
         ...this.items,
       ];
     },
@@ -64,8 +75,22 @@ export default {
       this.$emit('input', value);
     },
     loadItems(query) {
-      // TODO : API request
-      console.log('loadItems', query);
+      this.loading = true;
+      this.get('users', {
+        searchQuery: query,
+      })
+        .then((data) => {
+          if (data && data.length) {
+            this.items = data;
+          } else {
+            this.items = [];
+          }
+          this.loading = false;
+        })
+        .catch((error) => {
+          this.loading = false;
+          console.log('get user error', error);
+        });
     },
   },
 };

@@ -9,14 +9,7 @@ exports.create_a_transaction = (req, res) => {
       res.send(err);
     }
     const newTransaction = new Transaction(req.body);
-    // TEMPORARY
-    newTransaction.user = {
-      nickname: 'README.md',
-      firstName: 'Thomas',
-      lastName: 'Ferro',
-      color: 'blue',
-    };
-    // END TEMPORARY
+
     account.transactions.push(newTransaction);
     account.save((saveErr, updatedAccount) => {
       if (saveErr) {

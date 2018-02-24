@@ -112,17 +112,19 @@ export default {
         });
     },
     createAccount() {
-      this.post('accounts', {
-        name: this.accountQuery,
-      })
-        .then((data) => {
-          this.accountQuery = '';
-          this.accounts.push(data);
-          this.selectAccount(data);
+      if (this.accountQuery) {
+        this.post('accounts', {
+          name: this.accountQuery,
         })
-        .catch((error) => {
-          console.log('post account error', error);
-        });
+          .then((data) => {
+            this.accountQuery = '';
+            this.accounts.push(data);
+            this.selectAccount(data);
+          })
+          .catch((error) => {
+            console.log('post account error', error);
+          });
+      }
     },
     selectAccount(account) {
       this.selectedAccount = account;

@@ -19,10 +19,9 @@ app.use((req, res, next) => {
   next();
 });
 
-var accountRoutes = require('./api/routes/accountRoutes');
-var transactionRoutes = require('./api/routes/transactionRoutes');
-accountRoutes(app); //register the route
-transactionRoutes(app); //register the route
+// Register the API routes
+var routes = require('./api/routes/index');
+routes(app);
 
 app.listen(port);
 
