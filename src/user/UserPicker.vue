@@ -10,6 +10,8 @@
     v-model="formattedValue"
     item-text="displayName"
     no-data-text="No user found"
+    :error="userSearchError !== ''"
+    :error-messages="userSearchError !== '' ? [userSearchError] : []"
   ></v-select>
 </template>
 
@@ -37,6 +39,7 @@ export default {
       loading: false,
       items: [],
       search: null,
+      userSearchError: '',
     };
   },
   computed: {
@@ -76,6 +79,7 @@ export default {
     },
     loadItems(query) {
       this.loading = true;
+      this.userSearchError = '';
       this.get('users', {
         searchQuery: query,
       })
@@ -89,7 +93,7 @@ export default {
         })
         .catch((error) => {
           this.loading = false;
-          console.log('get user error', error);
+          this.userSearchError = `User search error : ${error}`;
         });
     },
   },

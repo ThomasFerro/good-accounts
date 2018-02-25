@@ -23,6 +23,9 @@
         :append-icon="'add_circle'"
         :append-icon-cb="createAccount"
         @keyup.enter="createAccount"
+        :loading="accountCreationLoading"
+        :error="accountCreatingError !== ''"
+        :error-messages="accountCreatingError !== '' ? [accountCreatingError] : []"
       ></v-text-field>
       <v-list
         dense
@@ -64,6 +67,16 @@
         </router-link>
       </v-container>
     </v-content>
+    <!-- Error snackbar -->
+    <v-snackbar
+      :timeout="6000"
+      color="error"
+      multi-line
+      v-model="errorSnackbar"
+    >
+      {{ errorText }}
+      <v-btn dark flat @click.native="errorSnackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -82,6 +95,10 @@ export default {
       defaultAccountIcon: 'dashboard',
       defaultAccountName: 'Unnamed account',
       accountQuery: '',
+      errorSnackbar: false,
+      errorText: '',
+      accountCreationLoading: false,
+      accountCreatingError: '',
     };
   },
   computed: {
@@ -108,21 +125,26 @@ export default {
           }
         })
         .catch((error) => {
-          console.log('error', error);
+          this.errorText = `Loading accounts error : ${error}`;
+          this.errorSnackbar = true;
         });
     },
     createAccount() {
       if (this.accountQuery) {
+        this.accountCreationLoading = true;
+        this.accountCreatingError = '';
         this.post('accounts', {
           name: this.accountQuery,
         })
           .then((data) => {
+            this.accountCreationLoading = false;
             this.accountQuery = '';
             this.accounts.push(data);
             this.selectAccount(data);
           })
           .catch((error) => {
-            console.log('post account error', error);
+            this.accountCreationLoading = false;
+            this.accountCreatingError = `Creating account error : ${error}`;
           });
       }
     },

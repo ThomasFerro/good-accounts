@@ -1,6 +1,24 @@
 <template>
   <v-flex xs12 fill-height>
-    <v-card>
+    <!-- No selected account -->
+    <v-card v-if="!selectedAccountId">
+      <v-card-text>
+        <v-alert type="warning" :value="true">
+          No account specified.
+        </v-alert>
+      </v-card-text>
+    </v-card>
+    <!-- Loading account -->
+    <v-card v-else-if="accountLoading">
+      <v-card-title primary-title>
+        <div class="headline">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          Loading account data...
+        </div>
+      </v-card-title>
+    </v-card>
+    <!-- Account's data -->
+    <v-card v-else>
       <v-card-title primary-title>
         <div class="headline">{{accountData && accountData.name}}</div>
         <!-- TODO : Users' icons -->
@@ -25,13 +43,28 @@
 
         <!-- Activities log -->
         <activities-log
+          v-if="accountData && accountData.transactions && accountData.transactions.length > 0"
           :activities="accountData && accountData.transactions"
           :currency="accountData && accountData.currency"
         ></activities-log>
 
+        <v-alert type="info" v-else :value="true">
+          This account does not have any transaction yet.
+        </v-alert>
+
         <!-- TODO : Graphs -->
       </v-card-text>
     </v-card>
+    <!-- Error snackbar -->
+    <v-snackbar
+      :timeout="6000"
+      color="error"
+      multi-line
+      v-model="errorSnackbar"
+    >
+      {{ errorText }}
+      <v-btn dark flat @click.native="errorSnackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-flex>
 </template>
 
@@ -46,6 +79,9 @@ export default {
   data() {
     return {
       accountData: {},
+      errorSnackbar: false,
+      errorText: '',
+      accountLoading: true,
     };
   },
   computed: {
@@ -85,6 +121,10 @@ export default {
     // Load current account's data
     loadAccountData() {
       if (this.selectedAccountId) {
+        this.accountData = {};
+        this.accountLoading = true;
+        this.errorSnackbar = false;
+        this.errorText = '';
         this.get(`accounts/${this.selectedAccountId}`)
           .then((account) => {
             this.accountData = {
@@ -94,9 +134,12 @@ export default {
               currency: '€',
               transactions: account.transactions,
             };
+            this.accountLoading = false;
           })
           .catch((error) => {
-            console.log('Account get error', error);
+            this.errorText = `Account loading error : ${error}`;
+            this.errorSnackbar = true;
+            this.accountLoading = false;
           });
       } else {
         this.accountData = {};

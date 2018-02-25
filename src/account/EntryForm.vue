@@ -78,6 +78,9 @@
             ></v-time-picker>
           </v-menu>
         </v-form>
+        <v-alert type="error" :value="postingNewEntryError">
+          {{ postingNewEntryError }}
+        </v-alert>
       </v-card-text>
       <v-card-actions>
         <v-btn
@@ -85,6 +88,7 @@
           color="blue"
           @click="validate"
           :disabled="!isValid"
+          :loading="postingNewEntry"
         >Validate</v-btn>
         <v-btn
           flat
@@ -142,6 +146,8 @@ export default {
       entryTime: '',
       dateFormat: 'YYYY-MM-DD',
       timeFormat: 'h:mma',
+      postingNewEntry: false,
+      postingNewEntryError: '',
     };
   },
   computed: {
@@ -179,12 +185,16 @@ export default {
     },
     validate() {
       // Post new transaction
+      this.postingNewEntryError = '';
+      this.postingNewEntry = true;
       this.post(`accounts/${this.selectedAccountId}/transactions`, this.entryInformations)
         .then(() => {
+          this.postingNewEntry = false;
           this.resetForm();
         })
         .catch((error) => {
-          console.log('post error', error);
+          this.postingNewEntryError = `An error has occurred while posting new entry : ${error}`;
+          this.postingNewEntry = false;
         });
     },
     resetForm() {

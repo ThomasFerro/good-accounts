@@ -26,8 +26,13 @@ export default {
             resolve(success && success.data);
           })
           .catch((error) => {
-            // TODO : error management
-            reject(error);
+            if (error && error.message) {
+              reject(error.message);
+            } else if (error && error.toString) {
+              reject(error && error.toString());
+            } else {
+              reject(error);
+            }
           });
       });
     },
