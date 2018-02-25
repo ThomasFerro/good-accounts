@@ -51,7 +51,11 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
     <v-content>
-      <v-container fluid fill-height>
+      <v-container
+        fluid
+        fill-height
+        v-if="selectedAccountId"
+      >
         <router-view></router-view>
         <router-link :to="{ name: 'newEntry' }">
           <v-btn
@@ -65,6 +69,32 @@
             <v-icon>add</v-icon>
           </v-btn>
         </router-link>
+      </v-container>
+      <v-container
+        fluid
+        fill-height
+        v-else
+      >
+        <v-flex xs12 fill-height>
+          <v-card fill-height>
+            <v-card-title primary-title>
+              <div class="headline">No account selected</div>
+            </v-card-title>
+            <v-card-text>
+              <p>
+                To create an account, simply type a name in the text field inside
+                the left menu then press the "Enter" key or click the
+                <v-icon>add_circle</v-icon> icon.
+              </p>
+              <p>
+                You can also select an account that already exists in the list
+                following the text field.
+                <br/>
+                If the list has too many elements, you can filter it via the same input.
+              </p>
+            </v-card-text>
+          </v-card>
+        </v-flex>
       </v-container>
     </v-content>
     <!-- Error snackbar -->
@@ -109,20 +139,17 @@ export default {
 
       return this.accounts
         .filter(account =>
-          !this.accountQuery || account.name.indexOf(this.accountQuery) > -1);
+          !this.accountQuery
+          || (account.name
+            && account.name.toLowerCase().indexOf(this.accountQuery.toLowerCase()) > -1));
     },
   },
   methods: {
     loadAccounts() {
+      this.selectAccount({});
       this.get('accounts')
         .then((data) => {
           this.accounts = data;
-          if (this.accounts &&
-          this.accounts.length > 0) {
-            this.selectAccount(this.accounts[0]);
-          } else {
-            this.selectAccount({});
-          }
         })
         .catch((error) => {
           this.errorText = `Loading accounts error : ${error}`;
