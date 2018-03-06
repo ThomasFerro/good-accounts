@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('user');
 
-exports.get_all_users = (req, res) => {
+exports.get_all_users = (req, res, next) => {
   let query = {};
   if (req.query && req.query.searchQuery) {
     // Building the search query
@@ -30,7 +30,10 @@ exports.get_all_users = (req, res) => {
   }
   User.find(query, (err, users) => {
     if (err) {
-      res.send(err);
+      next({
+        message: 'An error has occurred while searching for users',
+        error: err,
+      });
     }
 
     const getUserDisplayName = (user) => {

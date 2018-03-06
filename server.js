@@ -23,6 +23,11 @@ app.use((req, res, next) => {
 var routes = require('./api/routes/index');
 routes(app);
 
+// Error middleware
+app.use((err, req, res, next) => {
+  res.status(500).send(err);
+});
+
 app.listen(port);
 
 console.log('good-accounts REST API server started on: ' + port);

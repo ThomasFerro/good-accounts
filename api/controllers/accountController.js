@@ -3,29 +3,38 @@ const mongoose = require('mongoose');
 
 const Account = mongoose.model('account');
 
-exports.list_all_accounts = (req, res) => {
+exports.list_all_accounts = (req, res, next) => {
   Account.find({}, (err, accounts) => {
     if (err) {
-      res.send(err);
+      next({
+        message: 'An error has occurred while listing all accounts',
+        error: err,
+      });
     }
     res.json(accounts);
   });
 };
 
-exports.create_an_account = (req, res) => {
+exports.create_an_account = (req, res, next) => {
   const newAccount = new Account(req.body);
   newAccount.save((err, account) => {
     if (err) {
-      res.send(err);
+      next({
+        message: 'An error has occurred while creating an account',
+        error: err,
+      });
     }
     res.json(account);
   });
 };
 
-exports.read_an_account = (req, res) => {
+exports.read_an_account = (req, res, next) => {
   Account.findById(req.params.accountId, (err, account) => {
     if (err) {
-      res.send(err);
+      next({
+        message: 'An error has occurred while fetching an account',
+        error: err,
+      });
     }
     const formattedAccount = {
       // eslint-disable-next-line no-underscore-dangle
@@ -56,7 +65,7 @@ exports.read_an_account = (req, res) => {
   });
 };
 
-exports.update_an_account = (req, res) => {
+exports.update_an_account = (req, res, next) => {
   Account.findOneAndUpdate({
     _id: req.params.accountId,
   },
@@ -64,18 +73,24 @@ exports.update_an_account = (req, res) => {
   { new: true },
   (err, account) => {
     if (err) {
-      res.send(err);
+      next({
+        message: 'An error has occurred while updating an account',
+        error: err,
+      });
     }
     res.json(account);
   });
 };
 
-exports.delete_an_account = (req, res) => {
+exports.delete_an_account = (req, res, next) => {
   Account.remove({
     _id: req.params.accountId,
   }, (err) => {
     if (err) {
-      res.send(err);
+      next({
+        message: 'An error has occurred while deleting an account',
+        error: err,
+      });
     }
     res.json({ message: 'Account successfully deleted' });
   });
