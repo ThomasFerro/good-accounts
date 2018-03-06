@@ -24,8 +24,8 @@ var routes = require('./api/routes/index');
 routes(app);
 
 // Error middleware
-app.use((err, req, res, next) => {
-  res.status(500).send(err);
+app.use(({ errorCode, message, error }, req, res, next) => {
+  res.status(errorCode || 500).send({message, error});
 });
 
 app.listen(port);

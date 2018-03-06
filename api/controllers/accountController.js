@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const moment = require('moment');
 const mongoose = require('mongoose');
 
@@ -6,7 +7,7 @@ const Account = mongoose.model('account');
 exports.list_all_accounts = (req, res, next) => {
   Account.find({}, (err, accounts) => {
     if (err) {
-      next({
+      return next({
         message: 'An error has occurred while listing all accounts',
         error: err,
       });
@@ -19,7 +20,7 @@ exports.create_an_account = (req, res, next) => {
   const newAccount = new Account(req.body);
   newAccount.save((err, account) => {
     if (err) {
-      next({
+      return next({
         message: 'An error has occurred while creating an account',
         error: err,
       });
@@ -31,9 +32,14 @@ exports.create_an_account = (req, res, next) => {
 exports.read_an_account = (req, res, next) => {
   Account.findById(req.params.accountId, (err, account) => {
     if (err) {
-      next({
+      return next({
         message: 'An error has occurred while fetching an account',
         error: err,
+      });
+    } else if (!account) {
+      return next({
+        errorCode: 404,
+        message: 'The account couldn\'t be found',
       });
     }
     const formattedAccount = {
@@ -73,7 +79,7 @@ exports.update_an_account = (req, res, next) => {
   { new: true },
   (err, account) => {
     if (err) {
-      next({
+      return next({
         message: 'An error has occurred while updating an account',
         error: err,
       });
@@ -87,7 +93,7 @@ exports.delete_an_account = (req, res, next) => {
     _id: req.params.accountId,
   }, (err) => {
     if (err) {
-      next({
+      return next({
         message: 'An error has occurred while deleting an account',
         error: err,
       });

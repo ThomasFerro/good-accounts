@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const escape = require('escape-regexp');
 const mongoose = require('mongoose');
 
@@ -30,7 +31,7 @@ exports.get_all_users = (req, res, next) => {
   }
   User.find(query, (err, users) => {
     if (err) {
-      next({
+      return next({
         message: 'An error has occurred while searching for users',
         error: err,
       });

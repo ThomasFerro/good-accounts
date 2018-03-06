@@ -26,7 +26,13 @@ export default {
             resolve(success && success.data);
           })
           .catch((error) => {
-            if (error && error.message) {
+            if (error && error.response
+            && error.response.data
+            && error.response.data.message) {
+              // API specific error messages
+              reject(error.response.data.message);
+            } else if (error && error.message) {
+              // Basic HTTP error message
               reject(error.message);
             } else if (error && error.toString) {
               reject(error && error.toString());
