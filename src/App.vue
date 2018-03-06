@@ -31,6 +31,17 @@
         dense
         class="pt-0"
       >
+        <!-- Reload -->
+        <v-list-tile
+          @click="refreshAccounts">
+          <v-list-tile-action>
+            <v-icon>refresh</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Refresh accounts</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <!-- Accounts -->
         <v-list-tile
           v-for="account in filteredAccountList"
           :key="account._id"
@@ -145,8 +156,13 @@ export default {
     },
   },
   methods: {
+    refreshAccounts() {
+      this.loadAccounts();
+      this.drawer = true;
+    },
     loadAccounts() {
       this.selectAccount({});
+      this.accounts = [];
       this.get('accounts')
         .then((data) => {
           this.accounts = data;

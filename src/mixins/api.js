@@ -4,7 +4,6 @@ import axios from 'axios';
  * Api requests' mixin, implementing axios
  *
  * TODO : Implements PUT / DELETE
- * TODO : Success / error management
  * TODO : Manage cancellation
  */
 export default {
@@ -54,6 +53,20 @@ export default {
         method: 'post',
         resource,
         data,
+      });
+    },
+    put(resource, data) {
+      return this.request({
+        method: 'put',
+        resource,
+        data,
+      });
+    },
+    delete(resource, params) {
+      return this.request({
+        method: 'delete',
+        resource,
+        params,
       });
     },
   },

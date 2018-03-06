@@ -20,6 +20,13 @@
     <!-- Account's data -->
     <v-card v-else>
       <v-card-title primary-title>
+        <v-btn
+          flat
+          icon
+          @click="loadAccountData"
+        >
+          <v-icon>refresh</v-icon>
+        </v-btn>
         <div class="headline">{{accountData && accountData.name}}</div>
         <!-- TODO : Users' icons -->
       </v-card-title>
