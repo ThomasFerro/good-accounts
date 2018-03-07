@@ -2,7 +2,7 @@
   <v-select
     :label="label"
     autocomplete
-    :loading="loading"
+    :loading="usersLoading.loadingStatus"
     :required="required"
     :items="formattedItems"
     :rules="rules"
@@ -36,7 +36,10 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      usersLoading: {
+        loadingStatus: false,
+        requestGuid: '',
+      },
       items: [],
       search: null,
       userSearchError: '',
@@ -78,10 +81,14 @@ export default {
       this.$emit('input', value);
     },
     loadItems(query) {
-      this.loading = true;
+      this.usersLoading.loadingStatus = true;
       this.userSearchError = '';
-      this.get('users', {
-        searchQuery: query,
+      this.get({
+        resource: 'users',
+        params: {
+          searchQuery: query,
+        },
+        requestGuid: this.usersLoading.requestGuid,
       })
         .then((data) => {
           if (data && data.length) {
@@ -89,13 +96,16 @@ export default {
           } else {
             this.items = [];
           }
-          this.loading = false;
+          this.usersLoading.loadingStatus = false;
         })
         .catch((error) => {
-          this.loading = false;
+          this.usersLoading.loadingStatus = false;
           this.userSearchError = `User search error : ${error}`;
         });
     },
+  },
+  created() {
+    this.usersLoading.requestGuid = this.generateGuid();
   },
 };
 </script>

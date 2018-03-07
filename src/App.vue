@@ -35,7 +35,12 @@
         <v-list-tile
           @click="refreshAccounts">
           <v-list-tile-action>
-            <v-icon>refresh</v-icon>
+            <v-icon v-if="!accountsLoading.loadingStatus">refresh</v-icon>
+            <v-progress-circular
+              v-else
+              indeterminate
+              :size="22"
+            ></v-progress-circular>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>Refresh accounts</v-list-tile-title>
@@ -136,6 +141,10 @@ export default {
       defaultAccountIcon: 'dashboard',
       defaultAccountName: 'Unnamed account',
       accountQuery: '',
+      accountsLoading: {
+        loadingStatus: false,
+        requestGuid: '',
+      },
       errorSnackbar: false,
       errorText: '',
       accountCreationLoading: false,
@@ -163,11 +172,17 @@ export default {
     loadAccounts() {
       this.selectAccount({});
       this.accounts = [];
-      this.get('accounts')
+      this.accountsLoading.loadingStatus = true;
+      this.get({
+        resource: 'accounts',
+        requestGuid: this.accountsLoading.requestGuid,
+      })
         .then((data) => {
+          this.accountsLoading.loadingStatus = false;
           this.accounts = data;
         })
         .catch((error) => {
+          this.accountsLoading.loadingStatus = false;
           this.errorText = `Loading accounts error : ${error}`;
           this.errorSnackbar = true;
         });
@@ -176,8 +191,11 @@ export default {
       if (this.accountQuery) {
         this.accountCreationLoading = true;
         this.accountCreatingError = '';
-        this.post('accounts', {
-          name: this.accountQuery,
+        this.post({
+          resource: 'accounts',
+          data: {
+            name: this.accountQuery,
+          },
         })
           .then((data) => {
             this.accountCreationLoading = false;
@@ -198,6 +216,7 @@ export default {
     },
   },
   created() {
+    this.accountsLoading.requestGuid = this.generateGuid();
     this.loadAccounts();
   },
 };

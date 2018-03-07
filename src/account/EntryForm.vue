@@ -187,7 +187,10 @@ export default {
       // Post new transaction
       this.postingNewEntryError = '';
       this.postingNewEntry = true;
-      this.post(`accounts/${this.selectedAccountId}/transactions`, this.entryInformations)
+      this.post({
+        resource: `accounts/${this.selectedAccountId}/transactions`,
+        data: this.entryInformations,
+      })
         .then(() => {
           this.postingNewEntry = false;
           this.resetForm();

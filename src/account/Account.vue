@@ -9,7 +9,7 @@
       </v-card-text>
     </v-card>
     <!-- Loading account -->
-    <v-card v-else-if="accountLoading">
+    <v-card v-else-if="accountLoading.loadingStatus">
       <v-card-title primary-title>
         <div class="headline">
           <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -88,7 +88,10 @@ export default {
       accountData: {},
       errorSnackbar: false,
       errorText: '',
-      accountLoading: true,
+      accountLoading: {
+        loadingStatus: true,
+        requestGuid: '',
+      },
     };
   },
   computed: {
@@ -129,10 +132,13 @@ export default {
     loadAccountData() {
       if (this.selectedAccountId) {
         this.accountData = {};
-        this.accountLoading = true;
+        this.accountLoading.loadingStatus = true;
         this.errorSnackbar = false;
         this.errorText = '';
-        this.get(`accounts/${this.selectedAccountId}`)
+        this.get({
+          resource: `accounts/${this.selectedAccountId}`,
+          requestGuid: this.accountLoading.requestGuid,
+        })
           .then((account) => {
             this.accountData = {
               name: account.name,
@@ -141,12 +147,12 @@ export default {
               currency: '€',
               transactions: account.transactions,
             };
-            this.accountLoading = false;
+            this.accountLoading.loadingStatus = false;
           })
           .catch((error) => {
             this.errorText = `Account loading error : ${error}`;
             this.errorSnackbar = true;
-            this.accountLoading = false;
+            this.accountLoading.loadingStatus = false;
           });
       } else {
         this.accountData = {};
@@ -155,6 +161,9 @@ export default {
   },
   components: {
     ActivitiesLog,
+  },
+  created() {
+    this.accountLoading.requestGuid = this.generateGuid();
   },
 };
 </script>
