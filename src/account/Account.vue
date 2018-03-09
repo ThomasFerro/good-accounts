@@ -8,15 +8,6 @@
         </v-alert>
       </v-card-text>
     </v-card>
-    <!-- Loading account -->
-    <v-card v-else-if="accountLoading.loadingStatus">
-      <v-card-title primary-title>
-        <div class="headline">
-          <v-progress-circular indeterminate color="primary"></v-progress-circular>
-          Loading account data...
-        </div>
-      </v-card-title>
-    </v-card>
     <!-- Account's data -->
     <v-card v-else>
       <v-card-title primary-title>
@@ -27,10 +18,35 @@
         >
           <v-icon>refresh</v-icon>
         </v-btn>
-        <div class="headline">{{accountData && accountData.name}}</div>
+        <!-- Loading -->
+        <div
+          v-if="accountLoading.status === 'loading'"
+          class="headline"
+        >
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          Loading account data...
+        </div>
+        <!-- Title -->
+        <div
+          v-else-if="accountLoading.status === 'success'"
+          class="headline account-name"
+        >{{accountData && accountData.name}}
+          <v-btn
+            flat
+            icon
+            @click="settingDialog = true"
+          >
+            <v-icon>build</v-icon>
+          </v-btn>
+        </div>
         <!-- TODO : Users' icons -->
       </v-card-title>
-      <v-card-text>
+      <v-card-text v-if="accountLoading.status === 'error'">
+        <v-alert type="error" :value="true">
+          {{ accountLoading.error }}
+        </v-alert>
+      </v-card-text>
+      <v-card-text v-else-if="accountLoading.status === 'success'">
         <!-- Summary -->
         <p>
           The total account amount is
@@ -62,16 +78,37 @@
         <!-- TODO : Graphs -->
       </v-card-text>
     </v-card>
-    <!-- Error snackbar -->
-    <v-snackbar
-      :timeout="6000"
-      color="error"
-      multi-line
-      v-model="errorSnackbar"
+    <!-- Account setting dialog -->
+    <v-dialog
+      v-model="settingDialog"
+      fullscreen
+      transition="dialog-bottom-transition"
+      scrollable
     >
-      {{ errorText }}
-      <v-btn dark flat @click.native="errorSnackbar = false">Close</v-btn>
-    </v-snackbar>
+      <v-card tile>
+        <v-toolbar card dark color="blue">
+          <v-btn icon @click.native="settingDialog = false" dark>
+            <v-icon>close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Account settings</v-toolbar-title>
+          <v-spacer></v-spacer>
+        </v-toolbar>
+        <v-card-text>
+          <!-- Delete button + error -->
+          <v-btn
+            color="error"
+            dark
+            @click.stop="deleteAccount"
+            :loading="confirmDelete.status === 'deleting'"
+          >
+            {{ confirmDelete.status === 'confirm' ? 'Confirm ?' : 'Delete' }}
+          </v-btn>
+          <v-alert type="error" :value="confirmDelete.status === 'error'">
+            {{ confirmDelete.error }}
+          </v-alert>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-flex>
 </template>
 
@@ -86,10 +123,14 @@ export default {
   data() {
     return {
       accountData: {},
-      errorSnackbar: false,
-      errorText: '',
+      settingDialog: false,
+      confirmDelete: {
+        status: '',
+        timeout: {},
+        error: '',
+      },
       accountLoading: {
-        loadingStatus: true,
+        status: 'loading',
         requestGuid: '',
       },
     };
@@ -132,9 +173,8 @@ export default {
     loadAccountData() {
       if (this.selectedAccountId) {
         this.accountData = {};
-        this.accountLoading.loadingStatus = true;
-        this.errorSnackbar = false;
-        this.errorText = '';
+        this.accountLoading.status = 'loading';
+        this.accountLoading.error = '';
         this.get({
           resource: `accounts/${this.selectedAccountId}`,
           requestGuid: this.accountLoading.requestGuid,
@@ -147,15 +187,40 @@ export default {
               currency: '€',
               transactions: account.transactions,
             };
-            this.accountLoading.loadingStatus = false;
+            this.accountLoading.status = 'success';
           })
           .catch((error) => {
-            this.errorText = `Account loading error : ${error}`;
-            this.errorSnackbar = true;
-            this.accountLoading.loadingStatus = false;
+            this.accountLoading.error = `Account loading error : ${error}`;
+            this.accountLoading.status = 'error';
           });
       } else {
         this.accountData = {};
+      }
+    },
+    deleteAccount() {
+      clearTimeout(this.confirmDelete.timeout);
+      if (!this.confirmDelete.status
+        || this.confirmDelete.status === 'error') {
+        // Confirm
+        this.confirmDelete.status = 'confirm';
+        this.confirmDelete.timeout = setTimeout(() => {
+          this.confirmDelete.status = '';
+        }, 5000);
+      } else {
+        // Delete
+        this.confirmDelete.status = 'deleting';
+        this.delete({
+          resource: `accounts/${this.selectedAccountId}`,
+        })
+          .then(() => {
+            this.confirmDelete.status = '';
+            this.$store.commit('deleteAccount', this.selectedAccountId);
+            this.$store.commit('changeSelectedAccount', {});
+          })
+          .catch((error) => {
+            this.confirmDelete.error = error;
+            this.confirmDelete.status = 'error';
+          });
       }
     },
   },
@@ -167,3 +232,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.account-name {
+  word-break: break-all;
+}
+</style>
+

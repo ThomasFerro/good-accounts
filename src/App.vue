@@ -49,7 +49,7 @@
         <!-- Accounts -->
         <v-list-tile
           v-for="account in filteredAccountList"
-          :key="account._id"
+          :key="account.id"
           @click="selectAccount(account)"
         >
           <v-list-tile-action>
@@ -136,7 +136,6 @@ export default {
   data() {
     return {
       drawer: null,
-      accounts: [],
       // TODO Change default icon
       defaultAccountIcon: 'dashboard',
       defaultAccountName: 'Unnamed account',
@@ -152,6 +151,16 @@ export default {
     };
   },
   computed: {
+    accounts: {
+      get() {
+        return this.$store.state
+        && this.$store.state.account
+        && this.$store.state.account.accounts;
+      },
+      set(value) {
+        this.$store.commit('setAccounts', value);
+      },
+    },
     filteredAccountList() {
       if (!this.accounts || !this.accounts.filter) {
         return [];

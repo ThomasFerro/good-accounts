@@ -4,6 +4,12 @@ const mongoose = require('mongoose');
 
 const Account = mongoose.model('account');
 
+const formatAccountBaseData = account => ({
+  // eslint-disable-next-line no-underscore-dangle
+  id: account._id,
+  name: account.name,
+});
+
 exports.list_all_accounts = (req, res, next) => {
   Account.find({}, (err, accounts) => {
     if (err) {
@@ -12,7 +18,14 @@ exports.list_all_accounts = (req, res, next) => {
         error: err,
       });
     }
-    res.json(accounts);
+
+    const formattedAccounts = [];
+    if (accounts && accounts.length > 0) {
+      accounts.forEach((account) => {
+        formattedAccounts.push(formatAccountBaseData(account));
+      });
+    }
+    res.json(formattedAccounts);
   });
 };
 
@@ -25,7 +38,7 @@ exports.create_an_account = (req, res, next) => {
         error: err,
       });
     }
-    res.json(account);
+    res.json(formatAccountBaseData(account));
   });
 };
 
@@ -42,11 +55,7 @@ exports.read_an_account = (req, res, next) => {
         message: 'The account couldn\'t be found',
       });
     }
-    const formattedAccount = {
-      // eslint-disable-next-line no-underscore-dangle
-      id: account._id,
-      name: account.name,
-    };
+    const formattedAccount = formatAccountBaseData(account);
     if (account.transactions) {
       formattedAccount.amount = 0;
       formattedAccount.transactions = [];

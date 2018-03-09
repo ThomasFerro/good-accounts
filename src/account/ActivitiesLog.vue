@@ -13,7 +13,7 @@
     <div
       v-if="showActivities"
       v-for="activity in activities"
-      :key="activity._id"
+      :key="activity.id"
     >
       <slot :activity="activity">
         <!-- User card -->

@@ -14,7 +14,7 @@ export default {
     selectedAccountId() {
       return (this.selectedAccount
         // eslint-disable-next-line no-underscore-dangle
-        && this.selectedAccount._id)
+        && this.selectedAccount.id)
       || '';
     },
     selectedAccountName() {

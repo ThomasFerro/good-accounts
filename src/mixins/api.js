@@ -22,6 +22,7 @@ export default {
         const source = CancelToken.source();
         this.requests[requestGuid] = source.cancel;
 
+        // Send request
         axios({
           method,
           url: `${this.baseUrl}/${resource}`,
