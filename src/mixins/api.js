@@ -2,8 +2,6 @@ import axios from 'axios';
 
 /**
  * Api requests' mixin, implementing axios
- *
- * TODO : Tests PUT / DELETE
  */
 export default {
   data() {
@@ -11,6 +9,23 @@ export default {
       baseUrl: `${window.location.protocol}//${window.location.hostname}:3000`,
       requests: {},
     };
+  },
+  computed: {
+    isAuthenticated() {
+      return this.authenticationToken;
+    },
+    authenticationToken: {
+      get() {
+        return this.$store
+        && this.$store.state
+        && this.$store.state.authenticationToken;
+      },
+      set(token) {
+        if (token !== this.authenticationToken) {
+          this.$store.commit('setAuthenticationToken', token);
+        }
+      },
+    },
   },
   methods: {
     // Request
@@ -22,6 +37,11 @@ export default {
         const source = CancelToken.source();
         this.requests[requestGuid] = source.cancel;
 
+        const headers = { };
+        if (this.isAuthenticated) {
+          headers.Authorization = `JWT ${this.authenticationToken}`;
+        }
+
         // Send request
         axios({
           method,
@@ -29,6 +49,7 @@ export default {
           params,
           data,
           cancelToken: source.token,
+          headers,
         })
           .then((success) => {
             resolve(success && success.data);
@@ -38,6 +59,13 @@ export default {
             if (error && error.message
             && error.message === 'Cancelled') {
               return;
+            }
+
+            // Check if unauthorized
+            if (error && error.response && error.response.status === 401) {
+              if (this.$store) {
+                this.$store.commit('resetAuthenticationToken');
+              }
             }
 
             if (error && error.response

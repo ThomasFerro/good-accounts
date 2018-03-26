@@ -18,6 +18,7 @@
       </v-toolbar>
       <v-divider></v-divider>
       <v-text-field
+        v-if="isAuthenticated"
         class="px-2"
         v-model="accountQuery"
         :append-icon="'add_circle'"
@@ -28,6 +29,7 @@
         :error-messages="accountCreatingError !== '' ? [accountCreatingError] : []"
       ></v-text-field>
       <v-list
+        v-if="isAuthenticated"
         dense
         class="pt-0"
       >
@@ -66,7 +68,8 @@
     <v-toolbar fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
-    <v-content>
+    <!-- Authenticated -->
+    <v-content v-if="isAuthenticated">
       <v-container
         fluid
         fill-height
@@ -113,6 +116,9 @@
         </v-flex>
       </v-container>
     </v-content>
+    <v-content v-else>
+      <authentication-form></authentication-form>
+    </v-content>
     <!-- Error snackbar -->
     <v-snackbar
       :timeout="6000"
@@ -127,6 +133,7 @@
 </template>
 
 <script>
+import AuthenticationForm from '@/user/AuthenticationForm';
 import ApiMixin from '@/mixins/api';
 import AccountMixin from '@/account/mixin';
 
@@ -136,7 +143,6 @@ export default {
   data() {
     return {
       drawer: null,
-      // TODO Change default icon
       defaultAccountIcon: 'dashboard',
       defaultAccountName: 'Unnamed account',
       accountQuery: '',
@@ -171,6 +177,16 @@ export default {
           !this.accountQuery
           || (account.name
             && account.name.toLowerCase().indexOf(this.accountQuery.toLowerCase()) > -1));
+    },
+  },
+  watch: {
+    isAuthenticated: {
+      handler() {
+        if (this.isAuthenticated) {
+          this.loadAccounts();
+        }
+      },
+      immediate: true,
     },
   },
   methods: {
@@ -226,7 +242,9 @@ export default {
   },
   created() {
     this.accountsLoading.requestGuid = this.generateGuid();
-    this.loadAccounts();
+  },
+  components: {
+    AuthenticationForm,
   },
 };
 </script>
