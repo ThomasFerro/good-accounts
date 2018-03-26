@@ -23,6 +23,7 @@
     "helmet": "^3.12.0",
     "jsonwebtoken": "^8.2.0",
     "lodash": "^4.17.5",
+    "material-design-icons": "^3.0.1",
     "moment": "^2.20.1",
     "mongoose": "^5.0.4",
     "vue": "^2.5.2",

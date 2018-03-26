@@ -250,6 +250,8 @@ export default {
 </script>
 
 <style>
+@import url('..\node_modules\material-design-icons\iconfont\material-icons.css');
+
 .account-link {
   text-decoration: none;
 }
