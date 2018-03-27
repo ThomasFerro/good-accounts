@@ -7,6 +7,7 @@ const UserSchema = new Schema({
   nickname: {
     type: String,
     required: true,
+    unique: true,
   },
   firstName: {
     type: String,
@@ -19,6 +20,7 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   picture: String,
   color: String,

@@ -69,6 +69,26 @@ exports.get_all_users = (req, res, next) => {
 };
 
 exports.register_user = (req, res, next) => {
+  // Check if the user already exists
+  const findUser = (query) => {
+    User.findOne(query, (err, user) => {
+      if (err) {
+        return next({
+          message: 'An error has occurred while checking if the user already exists',
+          error: err,
+        });
+      }
+      if (user) {
+        const conflict = query.email ? 'email' : 'nickname';
+        return next({
+          message: `A user with this ${conflict} already exists`,
+        });
+      }
+    });
+  };
+  findUser({ email: req.body.email });
+  findUser({ nickname: req.body.nickname });
+
   const newUser = new User(req.body);
   bcrypt.hash(req.body.password, 12, (hashError, hash) => {
     if (hashError) {
